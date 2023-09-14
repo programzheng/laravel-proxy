@@ -40,7 +40,7 @@ class ProxyController extends Controller
         $response = $this->proxy($request);
 
         if (!$response->successful()) {
-            return response()->json([], 401);
+            return [];
         }
         $csrfToken = $this->getCsrfToken($response->body());
         $sourceCookies = $response->cookies()->toArray();
