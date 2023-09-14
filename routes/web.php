@@ -1,5 +1,11 @@
 <?php
 
+use App\Http\Controllers\ProxyController;
+use App\Http\Middleware\EncryptCookies;
+use App\Http\Middleware\ProxyUrlReplace;
+use App\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +19,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::prefix('proxy')->name('proxy.')->group(function () {
+    Route::prefix('rent_house')->middleware(ProxyUrlReplace::class)->name('rent_house.')->group(function () {
+        Route::get('/', [ProxyController::class, 'index'])->name('index');
+    });
 });
