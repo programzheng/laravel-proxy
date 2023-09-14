@@ -74,7 +74,10 @@ class ProxyController extends Controller
     {
         $headers = $this->cleanHeaders($request->headers);
         $this->logProxyRequest($request);
-        return Http::withHeaders($headers->all())->withCookies($request->cookies->all(), $this->getDomainByUrl(config('proxy.proxy.rent_house.index')))->get($request->url);
+        $response = Http::withHeaders($headers->all())->withCookies($request->cookies->all(), $this->getDomainByUrl(config('proxy.proxy.rent_house.index')))->get($request->url);
+        $this->logProxyResponse($response);
+
+        return $response;
     }
 
     public function list(Request $request): JsonResponse
@@ -103,11 +106,21 @@ class ProxyController extends Controller
 
     private function logProxyRequest(Request $request): void
     {
-        Log::driver('proxy')->debug('log proxy', [
+        Log::driver('proxy')->debug('log proxy request', [
             'headers' => $request->headers->all(),
             'cookies' => $request->cookies->all(),
             'url' => $request->url ?? '',
             'body' => $request->all(),
+        ]);
+    }
+
+    private function logProxyResponse(ClientResponse $response): void
+    {
+        Log::driver('proxy')->debug('log proxy response', [
+            'status' => $response->status(),
+            'body' => $response->body(),
+            'json' => $response->json(),
+            'object' => $response->object(),
         ]);
     }
 }
