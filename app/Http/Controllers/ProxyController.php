@@ -7,6 +7,7 @@ use Illuminate\Http\Client\Response as ClientResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Illuminate\Support\Str;
 
@@ -72,6 +73,7 @@ class ProxyController extends Controller
     public function proxy(Request $request): ClientResponse
     {
         $headers = $this->cleanHeaders($request->headers);
+        $this->logProxyRequest($request);
         return Http::withHeaders($headers->all())->withCookies($request->cookies->all(), $this->getDomainByUrl(config('proxy.proxy.rent_house.index')))->get($request->url);
     }
 
@@ -97,5 +99,15 @@ class ProxyController extends Controller
         }
 
         return $domain;
+    }
+
+    private function logProxyRequest(Request $request): void
+    {
+        Log::driver('proxy')->debug('log proxy', [
+            'headers' => $request->headers->all(),
+            'cookies' => $request->cookies->all(),
+            'url' => $request->url ?? '',
+            'body' => $request->all(),
+        ]);
     }
 }
