@@ -19,7 +19,7 @@ Route::prefix('v1')->group(function () {
     Route::prefix('proxy')->name('proxy.')->group(function () {
         Route::prefix('rent_house')->middleware(ProxyUrlReplace::class)->name('rent_house.')->group(function () {
             Route::get('/get_csrf_token_and_cookies', [ProxyController::class, 'getCsrfTokenAndCookies'])->name('get_csrf_token_and_cookies');
-            Route::get('/list', [ProxyController::class, 'list'])->name('list');
+            Route::get('/list', [ProxyController::class, 'proxy'])->name('list');
             Route::get('/detail_data', [ProxyController::class, 'proxy'])->name('detail_data');
         });
     });

@@ -38,7 +38,7 @@ class ProxyController extends Controller
 
     public function getCsrfTokenAndCookiesData(Request $request): array
     {
-        $response = $this->proxy($request);
+        $response = $this->proxyRequest($request);
 
         if (!$response->successful()) {
             return [];
@@ -70,7 +70,7 @@ class ProxyController extends Controller
         return $csrfToken;
     }
 
-    public function proxy(Request $request): ClientResponse
+    public function proxyRequest(Request $request): ClientResponse
     {
         $headers = $this->cleanHeaders($request->headers);
         $this->logProxyRequest($request);
@@ -80,9 +80,9 @@ class ProxyController extends Controller
         return $response;
     }
 
-    public function list(Request $request): JsonResponse
+    public function proxy(Request $request): JsonResponse
     {
-        $json = $this->proxy($request)->object();
+        $json = $this->proxyRequest($request)->object();
         return response()->json($json);
     }
 
@@ -118,7 +118,7 @@ class ProxyController extends Controller
     {
         Log::driver('proxy')->debug('log proxy response', [
             'status' => $response->status(),
-            'body' => $response->body(),
+            // 'body' => $response->body(),
             'json' => $response->json(),
             'object' => $response->object(),
         ]);
